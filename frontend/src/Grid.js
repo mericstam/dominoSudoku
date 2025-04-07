@@ -30,18 +30,33 @@ const Grid = () => {
   const handleCellClick = (row, col) => {
     if (!currentDomino) return;
 
-    // Ensure the placement is on unoccupied cells and adheres to Sudoku rules
     const isHorizontal = orientation === 'horizontal';
-    // Updated validation to support numbers 1–12
     const isValid = isHorizontal
       ? col + 1 < 12 && !grid[row][col] && !grid[row][col + 1] && isValidPlacement(grid, row, col, currentDomino.num1) && isValidPlacement(grid, row, col + 1, currentDomino.num2)
       : row + 1 < 9 && !grid[row][col] && !grid[row + 1][col] && isValidPlacement(grid, row, col, currentDomino.num1) && isValidPlacement(grid, row + 1, col, currentDomino.num2);
 
     if (isValid) {
-      // Dispatch the correct action to place the domino
       dispatch(placeDomino({ row, col, domino: currentDomino, orientation }));
     } else {
       alert('Cannot place domino here! The cells are either occupied or violate Sudoku rules.');
+
+      // Highlight invalid cells temporarily
+      const invalidCells = [];
+      if (isHorizontal) {
+        if (!isValidPlacement(grid, row, col, currentDomino.num1)) invalidCells.push([row, col]);
+        if (!isValidPlacement(grid, row, col + 1, currentDomino.num2)) invalidCells.push([row, col + 1]);
+      } else {
+        if (!isValidPlacement(grid, row, col, currentDomino.num1)) invalidCells.push([row, col]);
+        if (!isValidPlacement(grid, row + 1, col, currentDomino.num2)) invalidCells.push([row + 1, col]);
+      }
+
+      invalidCells.forEach(([r, c]) => {
+        const cell = document.querySelector(`.cell[data-row='${r}'][data-col='${c}']`);
+        if (cell) {
+          cell.classList.add('invalid');
+          setTimeout(() => cell.classList.remove('invalid'), 1000); // Remove highlight after 1 second
+        }
+      });
     }
   };
 
@@ -103,6 +118,8 @@ const Grid = () => {
               <div
                 key={colIndex}
                 className={`cell ${cell ? 'filled' : ''}`}
+                data-row={rowIndex}
+                data-col={colIndex}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
               >
                 {cell}

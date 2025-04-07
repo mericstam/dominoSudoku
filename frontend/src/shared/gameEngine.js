@@ -12,22 +12,28 @@ class Domino {
 function isValidPlacement(grid, row, col, num) {
   if (num < 1 || num > 12) return false; // Ensure the number is within the valid range
 
-  // Check row
+  // Check row for already placed numbers
   for (let i = 0; i < 12; i++) {
-    if (grid[row][i] === num) return false;
+    if (grid[row][i] === num) {
+      return false;
+    }
   }
 
-  // Check column
+  // Check column for already placed numbers
   for (let i = 0; i < 9; i++) {
-    if (grid[i][col] === num) return false;
+    if (grid[i][col] === num) {
+      return false;
+    }
   }
 
-  // Check 3x4 subgrid
+  // Check 3x4 subgrid for already placed numbers
   const startRow = Math.floor(row / 3) * 3;
   const startCol = Math.floor(col / 4) * 4;
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 4; j++) {
-      if (grid[startRow + i][startCol + j] === num) return false;
+      if (grid[startRow + i][startCol + j] === num) {
+        return false;
+      }
     }
   }
 
@@ -53,6 +59,23 @@ function placeDomino(grid, row, col, domino, orientation) {
   }
 
   return false; // Invalid placement
+}
+
+import axios from 'axios';
+
+export async function placeDominoAPI(row, col, domino, orientation) {
+  try {
+    const response = await axios.post('/api/placeDomino', {
+      row,
+      col,
+      domino,
+      orientation,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error placing domino:', error);
+    throw error;
+  }
 }
 
 module.exports = { grid, Domino, isValidPlacement, placeDomino };
