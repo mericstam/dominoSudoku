@@ -44,21 +44,55 @@ function isValidPlacement(grid, row, col, num) {
 function placeDomino(grid, row, col, domino, orientation) {
   const { num1, num2 } = domino;
 
-  if (orientation === 'horizontal') {
-    if (col + 1 < 12 && isValidPlacement(grid, row, col, num1) && isValidPlacement(grid, row, col + 1, num2)) {
-      grid[row][col] = num1;
-      grid[row][col + 1] = num2;
-      return true;
-    }
-  } else if (orientation === 'vertical') {
-    if (row + 1 < 9 && isValidPlacement(grid, row, col, num1) && isValidPlacement(grid, row + 1, col, num2)) {
-      grid[row][col] = num1;
-      grid[row + 1][col] = num2;
-      return true;
-    }
+  console.log(`Attempting to place domino: ${JSON.stringify(domino)} at (${row}, ${col}) with orientation: ${orientation}`);
+  console.log(`Grid state before placement: ${JSON.stringify(grid)}`);
+
+  if (orientation !== 'horizontal' && orientation !== 'vertical') {
+    console.log(`Invalid orientation: ${orientation}`);
+    return false;
   }
 
-  return false; // Invalid placement
+  // Step 1: Check for out-of-bounds
+  if (orientation === 'horizontal' && (col < 0 || col + 1 >= grid[0].length)) {
+    console.log(`Horizontal placement failed: Out of bounds at (${row}, ${col})`);
+    return false;
+  }
+  if (orientation === 'vertical' && row + 1 >= grid.length) {
+    console.log(`Vertical placement failed: Out of bounds at (${row}, ${col})`);
+    return false;
+  }
+
+  // Step 2: Check for overlap
+  if (orientation === 'horizontal' && (grid[row][col] !== null || grid[row][col + 1] !== null)) {
+    console.log(`Horizontal placement failed: Overlap at (${row}, ${col})`);
+    return false;
+  }
+  if (orientation === 'vertical' && (grid[row][col] !== null || grid[row + 1][col] !== null)) {
+    console.log(`Vertical placement failed: Overlap at (${row}, ${col})`);
+    return false;
+  }
+
+  // Step 3: Validate numbers
+  if (orientation === 'horizontal' && (!isValidPlacement(grid, row, col, num1) || !isValidPlacement(grid, row, col + 1, num2))) {
+    console.log(`Horizontal placement failed: Invalid numbers at (${row}, ${col})`);
+    return false;
+  }
+  if (orientation === 'vertical' && (!isValidPlacement(grid, row, col, num1) || !isValidPlacement(grid, row + 1, col, num2))) {
+    console.log(`Vertical placement failed: Invalid numbers at (${row}, ${col})`);
+    return false;
+  }
+
+  // Placement is valid, update the grid
+  if (orientation === 'horizontal') {
+    grid[row][col] = num1;
+    grid[row][col + 1] = num2;
+  } else {
+    grid[row][col] = num1;
+    grid[row + 1][col] = num2;
+  }
+
+  console.log(`Placement successful. Grid state after placement: ${JSON.stringify(grid)}`);
+  return true;
 }
 
 module.exports = { grid, Domino, isValidPlacement, placeDomino };

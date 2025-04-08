@@ -28,7 +28,7 @@ describe('Game Engine Tests', () => {
 
   test('Invalid horizontal domino placement (out of bounds)', () => {
     const domino = new Domino(3, 5);
-    expect(placeDomino(grid, 0, 8, domino, 'horizontal')).toBe(false);
+    expect(placeDomino(grid, 0, 11, domino, 'horizontal')).toBe(false); // Adjusted to test actual out-of-bounds case
   });
 
   test('Valid vertical domino placement', () => {
@@ -41,5 +41,17 @@ describe('Game Engine Tests', () => {
   test('Invalid vertical domino placement (out of bounds)', () => {
     const domino = new Domino(6, 7);
     expect(placeDomino(grid, 8, 0, domino, 'vertical')).toBe(false);
+  });
+
+  test('Invalid placement with out-of-range number', () => {
+    expect(isValidPlacement(grid, 0, 0, 0)).toBe(false); // Number too low
+    expect(isValidPlacement(grid, 0, 0, 13)).toBe(false); // Number too high
+  });
+
+  test('Invalid domino placement with overlapping cells', () => {
+    const domino1 = new Domino(5, 6);
+    const domino2 = new Domino(7, 8);
+    placeDomino(grid, 0, 0, domino1, 'horizontal');
+    expect(placeDomino(grid, 0, 1, domino2, 'horizontal')).toBe(false); // Overlaps with domino1
   });
 });

@@ -14,11 +14,17 @@ function generatePuzzle(difficulty = 'medium') {
   dominoes.sort(() => Math.random() - 0.5);
 
   // Determine the number of pre-placed dominoes based on difficulty
-  const maxDominoes = difficulty === 'easy' ? 40 : difficulty === 'medium' ? 20 : 10;
+  const maxDominoes = difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 10;
   let placedCount = 0;
 
+  console.log(`Starting puzzle generation with difficulty: ${difficulty}`);
+  console.log(`Max dominoes to place: ${maxDominoes}`);
+
   for (const domino of dominoes) {
-    if (placedCount >= maxDominoes) break;
+    if (placedCount >= maxDominoes) {
+      console.log(`Reached max dominoes: ${placedCount}`);
+      break;
+    }
 
     const row = Math.floor(Math.random() * 9);
     const col = Math.floor(Math.random() * 12);
@@ -26,8 +32,13 @@ function generatePuzzle(difficulty = 'medium') {
 
     if (placeDomino(grid, row, col, domino, orientation)) {
       placedCount++;
+      console.log(`Placed domino: ${JSON.stringify(domino)} at (${row}, ${col}) with orientation: ${orientation}`);
+    } else {
+      console.log(`Failed to place domino: ${JSON.stringify(domino)} at (${row}, ${col}) with orientation: ${orientation}`);
     }
   }
+
+  console.log(`Final placed domino count: ${placedCount}`);
 
   return { grid, dominoQueue: dominoes.slice(placedCount) };
 }
