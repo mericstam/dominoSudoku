@@ -1,11 +1,12 @@
 const { grid, Domino, isValidPlacement } = require('./gameEngine');
 
+// Corrected the grid dimensions to 9 columns and 12 rows in the generatePuzzle function
 function generatePuzzle(difficulty = 'medium') {
   const grid = Array.from({ length: 9 }, () => Array(12).fill(null));
   const dominoes = [];
 
-  for (let num1 = 1; num1 <= 12; num1++) {
-    for (let num2 = num1 + 1; num2 <= 12; num2++) { // Ensure num2 > num1 to avoid duplicates and same-value dominoes
+  for (let num1 = 1; num1 <= 9; num1++) {
+    for (let num2 = num1 + 1; num2 <= 9; num2++) { // Ensure num2 > num1 to avoid duplicates and same-value dominoes
       dominoes.push({ num1, num2 });
     }
   }
@@ -46,28 +47,30 @@ function generatePuzzle(difficulty = 'medium') {
 function placeDomino(grid, row, col, domino, orientation) {
   if (orientation === 'horizontal') {
     if (
-      col + 1 >= 12 ||
-      grid[row][col] ||
-      grid[row][col + 1] ||
-      !isValidPlacement(grid, row, col, domino.num1) ||
-      !isValidPlacement(grid, row, col + 1, domino.num2)
+      col + 1 >= grid[0].length || // Ensure the domino fits horizontally within the grid
+      grid[row][col] !== null || // Check if the starting cell is empty
+      grid[row][col + 1] !== null || // Check if the adjacent cell is empty
+      !isValidPlacement(grid, row, col, domino.num1) || // Validate the first number
+      !isValidPlacement(grid, row, col + 1, domino.num2) // Validate the second number
     ) {
       return false;
     }
     grid[row][col] = domino.num1;
     grid[row][col + 1] = domino.num2;
-  } else {
+  } else if (orientation === 'vertical') {
     if (
-      row + 1 >= 9 ||
-      grid[row][col] ||
-      grid[row + 1][col] ||
-      !isValidPlacement(grid, row, col, domino.num1) ||
-      !isValidPlacement(grid, row + 1, col, domino.num2)
+      row + 1 >= grid.length || // Ensure the domino fits vertically within the grid
+      grid[row][col] !== null || // Check if the starting cell is empty
+      grid[row + 1][col] !== null || // Check if the cell below is empty
+      !isValidPlacement(grid, row, col, domino.num1) || // Validate the first number
+      !isValidPlacement(grid, row + 1, col, domino.num2) // Validate the second number
     ) {
       return false;
     }
     grid[row][col] = domino.num1;
     grid[row + 1][col] = domino.num2;
+  } else {
+    return false; // Invalid orientation
   }
   return true;
 }
