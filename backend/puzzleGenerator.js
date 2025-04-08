@@ -72,13 +72,13 @@ function placeDomino(grid, row, col, domino, orientation) {
   return true;
 }
 
-// Generate a fully solved 9x9 Sudoku grid
+// Corrected the grid dimensions to 9 columns and 12 rows in the generateSolvedPuzzle function
 function generateSolvedPuzzle() {
-  const grid = Array.from({ length: 9 }, () => Array(9).fill(0));
+  const grid = Array.from({ length: 9 }, () => Array(12).fill(0));
 
   function isSafe(row, col, num) {
     // Check row
-    for (let x = 0; x < 9; x++) {
+    for (let x = 0; x < 12; x++) {
       if (grid[row][x] === num) return false;
     }
 
@@ -100,7 +100,7 @@ function generateSolvedPuzzle() {
   }
 
   function solve() {
-    for (let row = 0; row < 9; row++) {
+    for (let row = 0; row < 12; row++) {
       for (let col = 0; col < 9; col++) {
         if (grid[row][col] === 0) {
           for (let num = 1; num <= 9; num++) {
@@ -128,7 +128,7 @@ function generateSolvedPuzzle() {
 // Generate a list of dominoes from a solved puzzle
 function generateDominoListFromPuzzle(solvedPuzzle) {
   const dominoes = [];
-  const usedCells = Array.from({ length: 9 }, () => Array(9).fill(false));
+  const usedCells = Array.from({ length: 9 }, () => Array(12).fill(false));
 
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {

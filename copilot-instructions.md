@@ -2,6 +2,8 @@
 - always update copilot-instructions.md when you are done with a task. 
 - Always run `npm run build` and `npm test` as a last step to ensure the solution builds successfully and all tests pass.
 
+- this game has 9 columns and 12 rows
+
 # Commands
 - Use `git commit -m "message"` for committing changes.
 - '-reason' when I type this command I want you to reason deeper but no code changes
