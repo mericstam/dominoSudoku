@@ -91,9 +91,9 @@ function generateSolvedPuzzle() {
     }
 
     // Check 3x3 subgrid
-    const startRow = Math.floor(row / 3) * 3;
+    const startRow = Math.floor(row / 4) * 4;
     const startCol = Math.floor(col / 3) * 3;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 3; j++) {
         if (grid[startRow + i][startCol + j] === num) return false;
       }
