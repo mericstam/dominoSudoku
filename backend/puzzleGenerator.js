@@ -2,46 +2,36 @@ const { grid, Domino, isValidPlacement } = require('./gameEngine');
 
 // Corrected the grid dimensions to 9 columns and 12 rows in the generatePuzzle function
 function generatePuzzle(difficulty = 'medium') {
-  const grid = Array.from({ length: 9 }, () => Array(12).fill(null));
-  const dominoes = [];
+  // Step 1: Generate a solved grid using Sudoku logic
+  const solvedGrid = generateSolvedPuzzle();
 
-  for (let num1 = 1; num1 <= 9; num1++) {
-    for (let num2 = num1 + 1; num2 <= 9; num2++) { // Ensure num2 > num1 to avoid duplicates and same-value dominoes
-      dominoes.push({ num1, num2 });
-    }
-  }
+  // Step 2: Convert the solved grid into a list of dominoes
+  const dominoes = generateDominoListFromPuzzle(solvedGrid);
 
-  // Shuffle dominoes
-  dominoes.sort(() => Math.random() - 0.5);
+  // Step 3: Create a puzzle by removing some dominoes based on difficulty
+  const maxDominoes = difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 30;
+  const puzzleGrid = solvedGrid.map(row => row.slice()); // Create a copy of the solved grid
+  let removedCount = 0;
 
-  // Determine the number of pre-placed dominoes based on difficulty
-  const maxDominoes = difficulty === 'easy' ? 10 : difficulty === 'medium' ? 20 : 10;
-  let placedCount = 0;
-
-  console.log(`Starting puzzle generation with difficulty: ${difficulty}`);
-  console.log(`Max dominoes to place: ${maxDominoes}`);
-
-  for (const domino of dominoes) {
-    if (placedCount >= maxDominoes) {
-      console.log(`Reached max dominoes: ${placedCount}`);
-      break;
-    }
-
+  while (removedCount < maxDominoes) {
     const row = Math.floor(Math.random() * 9);
     const col = Math.floor(Math.random() * 12);
-    const orientation = Math.random() > 0.5 ? 'horizontal' : 'vertical';
 
-    if (placeDomino(grid, row, col, domino, orientation)) {
-      placedCount++;
-      console.log(`Placed domino: ${JSON.stringify(domino)} at (${row}, ${col}) with orientation: ${orientation}`);
-    } else {
-      console.log(`Failed to place domino: ${JSON.stringify(domino)} at (${row}, ${col}) with orientation: ${orientation}`);
+    if (puzzleGrid[row][col] !== 0) {
+      const backup = puzzleGrid[row][col];
+      puzzleGrid[row][col] = 0;
+
+      // Check if the puzzle is still solvable
+      if (!solve(puzzleGrid)) {
+        puzzleGrid[row][col] = backup; // Restore the value if not solvable
+      } else {
+        removedCount++;
+      }
     }
   }
 
-  console.log(`Final placed domino count: ${placedCount}`);
-
-  return { grid, dominoQueue: dominoes.slice(placedCount) };
+  // Step 4: Return the puzzle grid and remaining dominoes
+  return { grid: puzzleGrid, dominoQueue: dominoes };
 }
 
 function placeDomino(grid, row, col, domino, orientation) {
