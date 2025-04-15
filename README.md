@@ -1,6 +1,6 @@
 # Domino Sudoku Game
 
-A mashup game combining the logic of Sudoku with the mechanics of dominoes.
+A vibe coded mashup game combining the logic of Sudoku with the mechanics of dominoes.
 
 ## Tech Stack
 
