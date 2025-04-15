@@ -18,10 +18,6 @@ A vibe coded mashup game combining the logic of Sudoku with the mechanics of dom
 - **JavaScript**: For implementing the game engine and puzzle generator.
 - **WebSocket**: For real-time updates and multiplayer functionality.
 
-### Deployment
-- **Docker**: For containerizing the application.
-- **Azure Container Apps**: For hosting and scaling the application.
-
 ## Setup Instructions
 
 1. Clone the repository:
