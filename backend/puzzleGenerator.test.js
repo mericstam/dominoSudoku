@@ -1,25 +1,24 @@
 const { generatePuzzle } = require('./puzzleGenerator');
 const { grid } = require('./gameEngine');
 
-describe('Puzzle Generator Tests', () => {
-  test('Generate easy puzzle', () => {
+describe('Puzzle Generator Tests', () => {  test('Generate easy puzzle', () => {
     const puzzle = generatePuzzle('easy');
     expect(puzzle).toBeDefined();
-    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(10);
+    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(27);
     expect(puzzle.grid.flat().every(num => num === null || (num >= 1 && num <= 12))).toBe(true);
   });
 
   test('Generate medium puzzle', () => {
     const puzzle = generatePuzzle('medium');
     expect(puzzle).toBeDefined();
-    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(30);
+    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(20);
     expect(puzzle.grid.flat().every(num => num === null || (num >= 1 && num <= 12))).toBe(true);
   });
 
   test('Generate hard puzzle', () => {
     const puzzle = generatePuzzle('hard');
     expect(puzzle).toBeDefined();
-    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(40);
+    expect(countPlacedDominoes(puzzle.grid)).toBeLessThanOrEqual(14);
     expect(puzzle.grid.flat().every(num => num === null || (num >= 1 && num <= 12))).toBe(true);
   });
 

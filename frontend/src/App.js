@@ -14,8 +14,19 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Domino Sudoku</h1>
-      <Grid />
+      <header className="App-header">
+        <h1>Domino Sudoku Challenge</h1>
+        <p className="App-subtitle">Place dominoes to complete the grid following Sudoku rules</p>
+      </header>
+      <div className="game-container">
+        <Grid />
+      </div>
+      <footer className="App-footer">
+        <p>Domino Sudoku combines traditional Sudoku rules with domino placement</p>
+        <p className="rules">
+          Rules: Place all dominoes such that each row, column, and 3×4 box contains the numbers 1-12 exactly once.
+        </p>
+      </footer>
     </div>
   );
 }
