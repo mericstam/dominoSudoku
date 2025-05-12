@@ -401,11 +401,23 @@ const Grid = () => {
               
               // Set custom property for color based on the cell value
               const style = cell ? { '--cell-value': cell } : {};
+                // Add subgrid border classes
+              const subgridBorderClass = [];
+              
+              // Bottom border for rows 2 and 5 (end of subgrids)
+              if (rowIndex === 2 || rowIndex === 5) {
+                subgridBorderClass.push('subgrid-border-bottom');
+              }
+              
+              // Right border for columns 3, 7, and 11 (end of subgrids)
+              if (colIndex === 3 || colIndex === 7 || colIndex === 11) {
+                subgridBorderClass.push('subgrid-border-right');
+              }
               
               return (
                 <div
                   key={colIndex}
-                  className={`cell ${cell ? 'filled' : ''} ${hoverClass} ${hintClass} ${dominoClass} ${newlyPlacedClass}`}
+                  className={`cell ${cell ? 'filled' : ''} ${hoverClass} ${hintClass} ${dominoClass} ${newlyPlacedClass} ${subgridBorderClass.join(' ')}`}
                   data-row={rowIndex}
                   data-col={colIndex}
                   style={style}
