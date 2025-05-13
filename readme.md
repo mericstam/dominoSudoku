@@ -1,15 +1,16 @@
 # Domino Sudoku Challenge
 
-A unique puzzle game that combines elements of Sudoku and domino placement. This engaging brain teaser requires strategic thinking and careful planning.
+A unique puzzle game that combines elements of Sudoku and Tetris like placement of dominos. This engaging brain teaser requires strategic thinking and careful planning.
 
 ## Game Overview
 
 Domino Sudoku combines traditional Sudoku rules with domino placement mechanics:
 
 1. The game is played on a 9×12 grid divided into 3×4 boxes.
-2. You must place dominoes (pieces with two numbers) on the grid.
-3. Each domino covers exactly two adjacent cells.
-4. When completed, each row, column, and 3×4 box must contain the numbers 1-12 exactly once.
+2. The dominos are in a queue and you get them in one by one.
+3. You must place dominoes (pieces with two numbers) on the grid. the aim is to find the right spot for the domino on the grid
+4. Each domino covers exactly two adjacent cells.
+5. When completed, each row, column, and 3×4 box must contain the numbers 1-12 exactly once.
 
 ## Features
 
