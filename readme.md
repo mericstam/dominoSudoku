@@ -119,3 +119,7 @@ If you prefer to start the servers manually:
 - User accounts and leaderboards
 - More puzzle variations
 - Mobile-friendly responsive design
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
