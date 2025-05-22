@@ -1,7 +1,7 @@
-// Test script for the improved puzzle generator
-const { generatePuzzle } = require('./improvedPuzzleGenerator');
+// Test script for the simple puzzle generator
+const { generatePuzzle } = require('./simplePuzzleGenerator');
 
-console.log('Testing improved puzzle generator...');
+console.log('Testing simple puzzle generator...');
 
 // Generate puzzles with different difficulties
 console.log('\nGenerating easy puzzle:');

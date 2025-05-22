@@ -46,17 +46,18 @@ describe('Server API Tests', () => {
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('isValid', true);
   });
-  
   test('POST /api/validate-placement - Invalid placement', async () => {
-    // Set up a grid with a value at position (0,0)
+    // Set up a grid with number 5 at position (0,0)
     const grid = Array(9).fill().map(() => Array(12).fill(null));
-    grid[0][0] = 1; // Already has a value
+    grid[0][0] = 5; // Put a 5 at (0,0)
     
+    // Try to place a domino with the same number (5) elsewhere in the same row
+    // This violates Sudoku rules (no repeated numbers in a row)
     const payload = {
       grid,
       row: 0,
-      col: 0,
-      domino: { num1: 2, num2: 3 },
+      col: 2, // Different column in same row
+      domino: { num1: 5, num2: 6 }, // First number is already in this row
       orientation: 'horizontal',
     };
     const response = await request(app).post('/api/validate-placement').send(payload);
@@ -65,20 +66,10 @@ describe('Server API Tests', () => {
     expect(response.body).toHaveProperty('invalidCells');
     expect(Array.isArray(response.body.invalidCells)).toBe(true);
   });
-  
-  test('POST /api/solution - Submit valid solution', async () => {
-    // Create a valid solution - a fully populated grid with numbers 1-12 in each row/column
-    const validGrid = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1],
-      [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2],
-      [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3],
-      [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4],
-      [6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
-      [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6],
-      [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7],
-      [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8]
-    ];
+    test('POST /api/solution - Submit valid solution', async () => {
+    // Generate a valid solution grid using the same method as simplePuzzleGenerator
+    const { generateSolvedPuzzle } = require('./simplePuzzleGenerator');
+    const validGrid = generateSolvedPuzzle(); 
     
     const payload = { solution: validGrid };
     const response = await request(app).post('/api/solution').send(payload);
