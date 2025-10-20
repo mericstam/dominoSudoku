@@ -9,6 +9,8 @@
   position: relative;
   border: 3px solid #333;
   margin-top: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
 }
 
 .cell {
@@ -156,12 +158,43 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
+  width: 100%;
+}
+
+/* New container for horizontal layout of dominoes */
+.dominoes-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.current-domino-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.current-label {
+  font-weight: bold;
+  color: #2e7d32;
+  margin-bottom: 5px;
 }
 
 .queue-title {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  padding: 8px 15px;
+  background-color: #2e7d32;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: inline-block;
 }
 
 .toggle-button {
@@ -186,19 +219,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 15px 0;
+  margin: 10px 0;
   font-weight: bold;
-  padding: 5px 10px;
+  padding: 3px 8px;
   background-color: #f5f5f5;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   border: 1px solid #ddd;
+  font-size: 13px;
 }
 
 .orientation-label {
-  margin-right: 10px;
-  font-size: 14px;
-  color: #666;
+  display: none; /* Hide the label in the new compact layout */
 }
 
 .orientation-arrow {
@@ -320,13 +352,212 @@
 
 .dominoes-remaining {
   font-size: 16px;
-  margin: 10px 0 20px;
   text-align: center;
   font-weight: bold;
   color: #333;
-  background: #e9e9e9;
-  padding: 8px;
-  border-radius: 4px;
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #4CAF50;
+  transition: all 0.3s ease;
+}
+
+.dominoes-remaining:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  font-size: 18px;
+}
+
+.queue-stats {
+  font-size: 14px;
+  color: #f57c00;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Progress bar */
+.completion-meter {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #2196F3;
+  transition: all 0.3s ease;
+}
+
+.completion-meter:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.meter-label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progress-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%
+  );
+  background-size: 20px 20px;
+  animation: progress-animation 1s linear infinite;
+  z-index: 1;
+}
+
+@keyframes progress-animation {
+  0% { background-position: 0 0; }
+  100% { background-position: 20px 0; }
+}
+
+/* Game stats container */
+.game-stats-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 10px 0 20px;
+}
+
+/* Enhance dominoes remaining display */
+.dominoes-remaining {
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #4CAF50;
+  transition: all 0.3s ease;
+}
+
+.dominoes-remaining:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.stat-icon {
+  font-size: 18px;
+}
+
+.queue-stats {
+  font-size: 14px;
+  color: #f57c00;
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Progress bar */
+.completion-meter {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  border-left: 4px solid #2196F3;
+  transition: all 0.3s ease;
+}
+
+.completion-meter:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.meter-label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+}
+
+.progress-bar {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progress-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%
+  );
+  background-size: 20px 20px;
+  animation: progress-animation 1s linear infinite;
+  z-index: 1;
 }
 
 /* Game completion styles */
@@ -624,4 +855,235 @@
   background-color: #E64A19;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Skip button styling */
+@keyframes pulse-skip {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.skip-button {
+  background-color: #28a745; /* Green background */
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+  gap: 5px;
+}
+
+.skip-button:before {
+  content: "↩️";
+  font-size: 16px;
+}
+
+.skip-button:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: translateY(-2px);
+}
+
+.skip-button:hover:before {
+  animation: bounce 0.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-3px); }
+}
+
+.skip-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Queue loop indicator styling */
+.queue-loop-indicator {
+  font-size: 14px;
+  color: #e64a19;
+  margin-top: 8px;
+  font-weight: bold;
+  background-color: rgba(255, 152, 0, 0.15);
+  border: 1px solid #ff9800;
+  border-radius: 4px;
+  padding: 5px 10px;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.queue-loop-indicator:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Upcoming dominoes styling */
+.upcoming-dominoes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upcoming-title {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+  font-weight: bold;
+  border-bottom: 2px dotted #ccc;
+  padding-bottom: 5px;
+  display: inline-block;
+}
+
+.upcoming-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.upcoming-domino {
+  display: flex;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  width: 50px;
+  height: 25px;
+  background-color: #f8f8f8;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transform-origin: center;
+  transition: all 0.3s ease;
+}
+
+.domino-position {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.upcoming-domino:hover {
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  border-color: #4CAF50;
+}
+
+.upcoming-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px 15px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+  margin-top: 10px;
+  border: 1px dashed #ccc;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.domino-half.small {
+  font-size: 14px;
+  font-weight: normal;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #aaa;
+  color: #555;
+}
+
+.domino-half.small:last-child {
+  border-right: none;
+}
+
+/* Queue loop notification */
+@keyframes slideDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { transform: translateY(0); opacity: 1; }
+  90% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
+.queue-loop-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 152, 0, 0.95);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideDown 3s ease-in-out;
+  max-width: 90%;
+  text-align: center;
+  font-weight: bold;
+  border: 2px solid #fff;
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.notification-icon {
+  font-size: 24px;
+  animation: spin 2s infinite linear;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Skip button styling when queue has looped */
+.skip-button.queue-looped {
+  background-color: #218838; /* Darker green */
+}
+
+.skip-button.queue-looped:before {
+  content: "↩️"; /* Keep the same icon */
+}
+
+.skip-button.queue-looped:hover {
+  background-color: #1e7e34; /* Even darker green on hover */
+}
+
+@keyframes pulse-domino {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }

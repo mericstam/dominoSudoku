@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { placeDomino, setDominoQueue, setGrid, setGameCompletion } from './store';
+import { placeDomino, setDominoQueue, setGrid, setGameCompletion, skipDomino } from './store';
 import './Grid.css';
 
-const Grid = () => {
-  const grid = useSelector((state) => state.game.grid) || Array.from({ length: 9 }, () => Array(12).fill(null)); // Fallback to empty grid
+const Grid = () => {  const grid = useSelector((state) => state.game.grid) || Array.from({ length: 9 }, () => Array(12).fill(null)); // Fallback to empty grid
   const dominoQueue = useSelector((state) => state.game.dominoQueue) || []; // Fallback to empty domino queue
   const isGameComplete = useSelector((state) => state.game.isGameComplete);
-  const dominoPlacements = useSelector((state) => state.game.dominoPlacements) || [];
+  const dominoPlacements = useSelector((state) => state.game.dominoPlacements) || [];  const queueLoopCount = useSelector((state) => state.game.queueLoopCount || 0); // Get the queue loop count
   const dispatch = useDispatch();
   const [orientation, setOrientation] = useState('horizontal');
   const [gameMode, setGameMode] = useState('easy'); // Add game mode state
@@ -18,7 +17,24 @@ const Grid = () => {
   const [hint, setHint] = useState(null);
   const [hintUsed, setHintUsed] = useState(0);
   const [lastPlacedCells, setLastPlacedCells] = useState([]);
+  const [initialQueueLength, setInitialQueueLength] = useState(0); // Track the initial length of the queue
+  const [showQueueLoopMessage, setShowQueueLoopMessage] = useState(false); // State to control queue loop message visibility
   const currentDomino = dominoQueue[0]; // Get the current domino from the queue
+
+  // Track queue loop count changes
+  useEffect(() => {
+    if (queueLoopCount > 0) {
+      // Show the queue loop message
+      setShowQueueLoopMessage(true);
+      
+      // Hide the message after 3 seconds
+      const timeout = setTimeout(() => {
+        setShowQueueLoopMessage(false);
+      }, 3000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [queueLoopCount]);
 
   // Game timer
   useEffect(() => {
@@ -96,8 +112,7 @@ const Grid = () => {
     }
   }, [dominoQueue.length, isGameComplete, checkGridCompletion]);
 
-  useEffect(() => {
-    // Fetch the initial puzzle based on the default game mode
+  useEffect(() => {    // Fetch the initial puzzle based on the default game mode
     fetch(`http://localhost:3001/api/puzzle?difficulty=${gameMode}`)
       .then((response) => response.json())
       .then((data) => {
@@ -107,6 +122,8 @@ const Grid = () => {
         setTimer(0); // Reset timer
         setHintUsed(0); // Reset hint counter
         setHint(null); // Clear any hints
+        setInitialQueueLength(data.dominoQueue.length); // Store the initial queue length
+        setInitialQueueLength(data.dominoQueue.length); // Track the initial length of the queue
       })
       .catch((error) => console.error('Error fetching initial puzzle:', error));  
   }, [gameMode, dispatch]); // Added 'dispatch' to the dependency array
@@ -194,9 +211,7 @@ const Grid = () => {
 
   const handleGameModeChange = (event) => {
     const selectedMode = event.target.value;
-    setGameMode(selectedMode);
-
-    // Fetch a new puzzle based on the selected game mode
+    setGameMode(selectedMode);    // Fetch a new puzzle based on the selected game mode
     fetch(`http://localhost:3001/api/puzzle?difficulty=${selectedMode}`)
       .then((response) => response.json())
       .then((data) => {
@@ -206,7 +221,9 @@ const Grid = () => {
         setTimer(0); // Reset timer
         setHintUsed(0); // Reset hint counter
         setHint(null); // Clear any hints
+        setInitialQueueLength(data.dominoQueue.length); // Store the initial queue length
         dispatch(setGameCompletion(false)); // Reset game completion status
+        setInitialQueueLength(data.dominoQueue.length); // Track the initial length of the queue
       })
       .catch((error) => console.error('Error fetching puzzle:', error));
   };
@@ -224,6 +241,7 @@ const Grid = () => {
         setHint(null); // Clear any hints
         dispatch(setGameCompletion(false)); // Reset game completion status
         setShowConfetti(false);
+        setInitialQueueLength(data.dominoQueue.length); // Track the initial length of the queue
       })
       .catch((error) => console.error('Error fetching new puzzle:', error));
   };
@@ -266,6 +284,17 @@ const Grid = () => {
       .catch(error => console.error('Error getting hint:', error));
   };
 
+  // Handle skipping the current domino
+  const handleSkipDomino = () => {
+    if (!currentDomino || isGameComplete) return;
+    
+    // Dispatch the skip domino action
+    dispatch(skipDomino());
+    
+    // Clear any active hint when skipping
+    setHint(null);
+  };
+
   // Determine if a cell is part of a placed domino and in what direction
   const getDominoDirection = (rowIndex, colIndex) => {
     // Find if this cell is part of any placed domino
@@ -286,6 +315,15 @@ const Grid = () => {
     }
   };
 
+  // Show a temporary message when the queue loops
+  useEffect(() => {
+    if (queueLoopCount > 0) {
+      setShowQueueLoopMessage(true);
+      const timer = setTimeout(() => setShowQueueLoopMessage(false), 3000); // Show for 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [queueLoopCount]);
+
   return (
     <div className="domino-game-container">
       {showConfetti && (
@@ -301,6 +339,16 @@ const Grid = () => {
               }}
             />
           ))}
+        </div>
+      )}
+      
+      {/* Queue Loop Notification */}
+      {showQueueLoopMessage && (
+        <div className="queue-loop-notification">
+          <div className="notification-content">
+            <span className="notification-icon">🔄</span>
+            <span>You've looped through the entire queue {queueLoopCount} {queueLoopCount === 1 ? 'time' : 'times'}</span>
+          </div>
         </div>
       )}
       
@@ -327,25 +375,66 @@ const Grid = () => {
           <button className="new-game-button" onClick={startNewGame}>Start New Game</button>
         </div>
       ) : (
-        <>
-          <div className="queue-container">
-            <div className="queue-title">Next Domino to Place</div>
-            {currentDomino && (
-              <>
-                <div className={`domino ${orientation === 'vertical' ? 'vertical' : ''}`}>
-                  <div className="domino-half">{currentDomino.num1}</div>
-                  <div className="domino-half">{currentDomino.num2}</div>
+        <>          <div className="queue-container">
+            <div className="queue-title">Dominoes Queue</div>
+            
+            {/* Horizontal flex container for current and upcoming dominoes */}
+            <div className="dominoes-row">
+              {currentDomino && (
+                <div className="current-domino-container">
+                  <div className="current-label">Current</div>
+                  <div className={`domino ${orientation === 'vertical' ? 'vertical' : ''}`}>
+                    <div className="domino-half">{currentDomino.num1}</div>
+                    <div className="domino-half">{currentDomino.num2}</div>
+                  </div>
+                  <div className="orientation-indicator">
+                    <span className="orientation-arrow">
+                      {orientation === 'horizontal' ? '→' : '↓'}
+                    </span>
+                    <span className="orientation-text">
+                      {orientation === 'horizontal' ? 'Horizontal' : 'Vertical'}
+                    </span>
+                  </div>
+                  
+                  {/* Skip button */}
+                  <button 
+                    className={`skip-button ${queueLoopCount > 0 ? 'queue-looped' : ''}`} 
+                    onClick={handleSkipDomino} 
+                    title="Skip this domino and place it at the end of the queue"
+                  >
+                    Skip
+                  </button>
                 </div>
-                <div className="orientation-indicator">
-                  <span className="orientation-label">Placement direction:</span>
-                  <span className="orientation-arrow">
-                    {orientation === 'horizontal' ? '→' : '↓'}
-                  </span>
-                  <span className="orientation-text">
-                    {orientation === 'horizontal' ? 'Horizontal' : 'Vertical'}
-                  </span>
+              )}
+              
+              {/* Upcoming dominoes preview - now displayed next to current domino */}
+              {dominoQueue.length > 1 && (
+                <div className="upcoming-dominoes">
+                  <div className="upcoming-title">Next in queue:</div>
+                  <div className="upcoming-container">
+                    {dominoQueue.slice(1, 4).map((domino, index) => {                    
+                      return (
+                        <div 
+                          key={index} 
+                          className="upcoming-domino"
+                          title={`Next domino #${index + 1} in queue`}
+                        >
+                          <div className="domino-position">{index + 1}</div>
+                          <div className="domino-half small">{domino.num1}</div>
+                          <div className="domino-half small">{domino.num2}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </>
+              )}
+            </div>
+            
+            {/* Queue loop indicator */}
+            {queueLoopCount > 0 && (
+              <div className="queue-loop-indicator">
+                Queue looped: {queueLoopCount} {queueLoopCount === 1 ? 'time' : 'times'}
+              </div>
             )}
           </div>
           
@@ -355,11 +444,30 @@ const Grid = () => {
             </button>
               <button onClick={getHint} className="hint-button" disabled={!currentDomino}>
               Get Hint {hintUsed > 0 ? `(${hintUsed} used)` : ''}
-            </button>
-          </div>
-          
-          <div className="dominoes-remaining">
-            Dominoes remaining: {dominoQueue.length}
+            </button>          </div>            <div className="game-stats-container">
+            <div className="dominoes-remaining">
+              <div className="stat-main">
+                <span className="stat-icon">🧩</span>
+                <span>Dominoes remaining: {dominoQueue.length}</span>
+              </div>
+              {queueLoopCount > 0 && (
+                <div className="queue-stats">
+                  <span className="stat-icon">🔄</span>
+                  <span>Queue loops: {queueLoopCount}</span>
+                </div>
+              )}
+            </div>            <div className="completion-meter">
+              <div className="meter-label">
+                Puzzle progress: {initialQueueLength - dominoQueue.length} / {initialQueueLength} dominoes placed
+              </div>                <div className="progress-bar" title={`${initialQueueLength - dominoQueue.length} out of ${initialQueueLength} dominoes placed`}>
+                <div 
+                  className="progress-fill" 
+                  style={{ 
+                    width: `${Math.min(100, initialQueueLength > 0 ? ((initialQueueLength - dominoQueue.length) / initialQueueLength) * 100 : 0)}%` 
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         </>
       )}
@@ -440,6 +548,13 @@ const Grid = () => {
           </button>
         )}
       </div>
+      
+      {/* Notification for queue loop */}
+      {showQueueLoopMessage && (
+        <div className="queue-loop-notification">
+          The queue has looped! You are now seeing previously placed dominoes.
+        </div>
+      )}
     </div>
   );
 };

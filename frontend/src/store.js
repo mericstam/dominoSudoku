@@ -8,9 +8,13 @@ const initialState = {
     num1: (i % 12) + 1,
     num2: ((i + 1) % 12) + 1,
   })), // Generate 54 dominoes with numbers 1–12
+  originalQueueLength: 0, // Store the original queue length to track loops
+  firstDominoId: null, // Store the first domino's unique ID to detect loops
+  skippedDominoCount: 0, // Count how many dominoes have been skipped
   selectedDomino: null, // Currently selected domino
   isGameComplete: false, // Flag to track game completion
   dominoPlacements: [], // Track where dominoes have been placed
+  queueLoopCount: 0, // Track how many times we've looped through the queue
 };
 
 // Game slice
@@ -22,15 +26,27 @@ const gameSlice = createSlice({
       state.grid = action.payload;
       state.isGameComplete = false; // Reset game completion when setting a new grid
       state.dominoPlacements = []; // Reset domino placements
-    },
-    setDominoQueue(state, action) {
-      state.dominoQueue = action.payload;
+      state.queueLoopCount = 0; // Reset queue loop counter
+    },    setDominoQueue(state, action) {
+      // Add unique IDs to each domino for tracking
+      state.dominoQueue = action.payload.map((domino, index) => ({
+        ...domino,
+        id: `domino-${index}` // Add a unique ID to each domino
+      }));
+      
+      // If we have dominoes, store the first one's ID for loop detection
+      if (state.dominoQueue.length > 0) {
+        state.firstDominoId = state.dominoQueue[0].id;
+        state.originalQueueLength = state.dominoQueue.length;
+      }
+      
       state.isGameComplete = false; // Reset game completion when setting a new domino queue
+      state.queueLoopCount = 0; // Reset queue loop counter
+      state.skippedDominoCount = 0; // Reset skipped domino counter
     },
     selectDomino(state, action) {
       state.selectedDomino = action.payload;
-    },    
-    placeDomino(state, action) {
+    },      placeDomino(state, action) {
       const { row, col, domino, orientation } = action.payload;
       
       // Always place num1 in the first cell, num2 in the second cell
@@ -52,6 +68,11 @@ const gameSlice = createSlice({
       // Remove the placed domino from the queue
       state.dominoQueue.shift();
       
+      // Check if we've looped back to the first domino after placing
+      if (state.dominoQueue.length > 0 && state.dominoQueue[0].id === state.firstDominoId) {
+        state.queueLoopCount += 1;
+      }
+      
       // We don't automatically mark the game as complete when the queue is empty
       // This ensures we only show completion when the grid is fully filled AND valid
       // Grid validation is handled by the server-side API call
@@ -60,12 +81,29 @@ const gameSlice = createSlice({
     // New reducer to manually set game completion status
     setGameCompletion(state, action) {
       state.isGameComplete = action.payload;
+    },    // New reducer to skip the current domino and put it at the end of the queue
+    skipDomino(state) {
+      if (state.dominoQueue.length > 0) {
+        // Take the first domino
+        const skippedDomino = state.dominoQueue.shift();
+        
+        // Put it at the end of the queue
+        state.dominoQueue.push(skippedDomino);
+        
+        // Increment the skipped domino counter
+        state.skippedDominoCount += 1;
+        
+        // Check if we've looped back to the first domino
+        if (state.dominoQueue[0].id === state.firstDominoId) {
+          state.queueLoopCount += 1;
+        }
+      }
     }
   },
 });
 
 // Export actions
-export const { setGrid, setDominoQueue, selectDomino, placeDomino, setGameCompletion } = gameSlice.actions;
+export const { setGrid, setDominoQueue, selectDomino, placeDomino, setGameCompletion, skipDomino } = gameSlice.actions;
 
 // Thunk to fetch a new puzzle
 export const fetchPuzzle = (difficulty) => async (dispatch) => {
