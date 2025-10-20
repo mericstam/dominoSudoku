@@ -56,7 +56,7 @@ echo Starting servers...
 
 :: Start the backend server in a new window
 echo Starting backend server on http://localhost:3001
-start "Domino Sudoku Backend" cmd /c "cd backend && npm start"
+start "Domino Sudoku Backend" cmd /c "cd /d \"%~dp0..\src\backend\" && npm start"
 
 :: Wait for backend to start
 echo Waiting for backend to initialize...
@@ -64,7 +64,7 @@ timeout /t 3 /nobreak >nul
 
 :: Start the frontend server in a new window
 echo Starting frontend server on http://localhost:3000
-start "Domino Sudoku Frontend" cmd /c "cd frontend && npm start"
+start "Domino Sudoku Frontend" cmd /c "cd /d \"%~dp0..\src\frontend\" && npm start"
 
 echo.
 echo Servers should be starting now in separate windows.

@@ -69,19 +69,19 @@ tests/
 └── unit/
 
 # [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+src/
+├── backend/
+│   ├── src/
+│   │   ├── models/
+│   │   ├── services/
+│   │   └── api/
+│   └── tests/
+└── frontend/
+  ├── src/
+  │   ├── components/
+  │   ├── pages/
+  │   └── services/
+  └── tests/
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/

@@ -57,7 +57,7 @@ Domino Sudoku combines traditional Sudoku rules with domino placement mechanics:
 
 2. Install dependencies for both backend and frontend:
    ```bash
-   cd backend
+   cd src/backend
    npm install
    cd ../frontend
    npm install
@@ -70,11 +70,11 @@ We provide several convenient start scripts that will automatically check for ru
 #### On Windows
 
 You can use one of these options:
-- Double-click on `start.bat` to run the batch script
-- Right-click on `start.ps1` and select "Run with PowerShell"
+- Double-click on `scripts/start.bat` to run the batch script
+- Right-click on `scripts/start.ps1` and select "Run with PowerShell"
 - Run the Node.js script: 
   ```
-  node start.js
+   node scripts/start.js
   ```
 
 ### Manual Start
@@ -83,13 +83,13 @@ If you prefer to start the servers manually:
 
 1. Start the backend server:
    ```bash
-   cd backend
+   cd src/backend
    npm start
    ```
 
 2. Start the frontend development server:
    ```bash
-   cd frontend
+   cd src/frontend
    npm start
    ```
 

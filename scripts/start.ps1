@@ -61,7 +61,7 @@ Write-Host "Starting servers..." -ForegroundColor Cyan
 
 # Start the backend server in a new window
 Write-Host "Starting backend server on http://localhost:3001" -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit -Command cd '$PSScriptRoot\backend'; npm start"
+Start-Process powershell -ArgumentList "-NoExit -Command cd '$PSScriptRoot\..\src\backend'; npm.cmd start"
 
 # Wait for backend to start
 Write-Host "Waiting for backend to initialize..." -ForegroundColor Cyan
@@ -69,7 +69,7 @@ Start-Sleep -Seconds 3
 
 # Start the frontend server in a new window
 Write-Host "Starting frontend server on http://localhost:3000" -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit -Command cd '$PSScriptRoot\frontend'; npm start"
+Start-Process powershell -ArgumentList "-NoExit -Command cd '$PSScriptRoot\..\src\frontend'; npm.cmd start"
 
 Write-Host ""
 Write-Host "Servers should be starting now in separate windows." -ForegroundColor Green

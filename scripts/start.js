@@ -10,6 +10,8 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 
+const ROOT_DIR = path.join(__dirname, '..');
+
 // Configuration
 const BACKEND_PORT = 3001;
 const FRONTEND_PORT = 3000;
@@ -115,7 +117,7 @@ async function killProcessOnPort(port) {
 function startServer(dir, command, name) {
     console.log(`Starting ${name}...`);
     
-    const fullPath = path.join(__dirname, dir);
+    const fullPath = path.join(ROOT_DIR, dir);
     
     // Verify directory exists
     if (!fs.existsSync(fullPath)) {
@@ -231,7 +233,7 @@ async function start() {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Start backend server
-    const backendServer = startServer('backend', 'npm start', 'Backend Server');
+    const backendServer = startServer(path.join('src', 'backend'), 'npm start', 'Backend Server');
     
     if (!backendServer) {
         throw new Error('Failed to start backend server.');
@@ -279,7 +281,7 @@ async function start() {
     }
     
     // Start frontend server
-    const frontendServer = startServer('frontend', 'npm start', 'Frontend Server');
+    const frontendServer = startServer(path.join('src', 'frontend'), 'npm start', 'Frontend Server');
     
     if (!frontendServer) {
         console.error('Failed to start frontend server.');
